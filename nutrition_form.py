@@ -8,9 +8,10 @@ SERVICE_URL = st.secrets["general"]["SERVICE_URL"]
 def nutrition_form():
 
     # Add a "Go Back" button to navigate to the previous page
-    if st.button("Go Back"):
+    def go_back():
         st.session_state["page"] = "homepage"
-        st.experimental_rerun()
+    st.button("Go Back", on_click=go_back)
+
 
     st.title("Calculate Your Daily Needs")
     st.markdown("Fill in your details below:")
@@ -71,6 +72,7 @@ def nutrition_form():
 
     # Display "Scan my plate" button if daily needs are calculated
     if st.session_state.get("daily_needs_ok", False):
-        if st.button("Scan my plate"):
+        def go_to_scan():
             st.session_state["page"] = "meal_analysis"
-            st.experimental_rerun()
+        st.button("Scan my plate", on_click=go_to_scan)
+            

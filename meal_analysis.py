@@ -58,9 +58,9 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 def meal_analysis():
 
     # Add a "Go Back" button to navigate to the previous page
-    if st.button("Go Back"):
+    def go_back():
         st.session_state["page"] = "nutrition_form"
-        st.experimental_rerun()
+    st.button("Go Back", on_click=go_back)
 
     st.title("Analyze Your Meal")
     st.markdown("Upload an image of your meal to analyze its nutritional content.")
