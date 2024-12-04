@@ -5,7 +5,7 @@ SERVICE_URL = st.secrets["general"]["SERVICE_URL"]
 
 def homepage():
     st.title("🍴 Welcome to FoodBuddy!")
-    st.image(".streamlit/HealthyMeal.jpg", caption="Healthy Meal!")
+    st.image("website/HealthyMeal.jpg", caption="Healthy Meal!")
     st.markdown(
         """
         FoodBuddy™ helps you analyze your meal and provides nutritional insights.
