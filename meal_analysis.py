@@ -45,8 +45,6 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 
     # Ensure the detected recipe contains numeric values
     aligned_detected_recipe["Quantity in your plate"] = aligned_detected_recipe["Quantity in your plate"].astype(float)
-    st.table(aligned_daily_intake)
-    st.table(aligned_detected_recipe)
 
     # Perform subtraction to calculate remaining nutrients
     remaining_nutrients = (
