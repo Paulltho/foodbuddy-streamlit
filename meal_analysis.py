@@ -136,11 +136,11 @@ def meal_analysis():
 
 
                             elif 0.6 <= confidence <= 0.8:
-                                answer == False
+                                st.session_state["answer"] = False
                                 st.warning(f"Your meal might be **{recipe_name}**. The model has moderate confidence.")
                                 if st.button("Yes, that's correct!"):
-                                    answer = True
-                                if answer == True:
+                                    st.session_state = True
+                                if st.session_state.get("answer") == True:
                                     get_nutrients_and_KNN(recipe_name)
 
                                 st.button("No, that's not correct.", on_click=relaunch_photo_analysis)
