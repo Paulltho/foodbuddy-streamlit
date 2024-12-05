@@ -80,29 +80,22 @@ def get_nutrients_and_KNN(recipe_name):
 
     if nutrients_response.status_code == 200:
         nutrients = nutrients_response.json().get("nutrients", [])
-        detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
+        if nutrients:
+            detected_recipe_df = pd.DataFrame(nutrients)
 
-        st.subheader(f"Nutritional Content of your plate")
-        st.dataframe(detected_recipe_df)
+            # Select only the relevant columns for display
+            relevant_columns = [col for col in detected_recipe_df.columns if "_total" in col]
+            detected_recipe_df = detected_recipe_df[relevant_columns].transpose()
 
-        nutrients_data = []
-        for nutrient in nutrients:
-            emoji = nutrient_emojis.get(nutrient["Nutrient"], "🍽️")
-            nutrients_data.append({
-                "Nutrient": f"{nutrient['Nutrient']} {emoji} ({nutrient['Unit']})",
-                "Quantity in Dish": round(nutrient["Value"], 0)
-            })
+            # Rename the index for user-friendliness and add emojis
+            detected_recipe_df.index = detected_recipe_df.index.map(
+                lambda x: f"{nutrient_emojis.get(x.split('_')[0], '🍽️')} {x.replace('_(G)_total', ' (g)').replace('_(MG)_total', ' (mg)').replace('_(UG)_total', ' (µg)')}"
+            )
 
-        # Create a DataFrame for Nutritional Intake
-        nutrients_df = pd.DataFrame(nutrients_data)
-
-        # Style the DataFrame for better display
-        st.table(nutrients_df)
-
-
-
-
-
+            st.subheader("Nutritional Content of your plate")
+            st.dataframe(detected_recipe_df)
+        else:
+            st.error("No nutrient data found for this recipe.")
 
         remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
 
