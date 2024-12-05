@@ -22,7 +22,6 @@ def nutrition_form():
     weight = st.number_input("Weight (kg)", min_value=1, max_value=200, step=1)
     height = st.number_input("Height (cm)", min_value=50, max_value=250, step=1)
 
-    st.subheader("Activity Level")
     activity_level = st.selectbox(
         "Choose your activity level",
         [
