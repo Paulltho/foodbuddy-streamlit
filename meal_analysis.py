@@ -19,11 +19,12 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 
     Args:
         df (pd.DataFrame): User's daily intake with columns ["Nutrient", "Your Daily Intake"].
-        detected_recipe_df (pd.DataFrame): Detected recipe content with columns ["Nutrient", "Value"].
+        detected_recipe_df (pd.DataFrame): Detected recipe content with columns ["Nutrient", "Quantity in your plate"].
 
     Returns:
         pd.DataFrame: A DataFrame showing remaining daily intake, original intake, and detected values.
     """
+
     # Manual mapping of nutrient names between the two DataFrames
     nutrient_mapping = {
         "Carbohydrates": "🍞 Carbohydrates (g)",
@@ -37,6 +38,10 @@ def remaining_nutrients_manual(df, detected_recipe_df):
         "Vitamin D": "🌞 Vitamin D (µg)",
         "Vitamin A": "🥕 Vitamin A (µg)",
     }
+
+    # Extract numeric values from "Your Daily Intake" and create "Daily Intake (Value)"
+    if "Daily Intake (Value)" not in df.columns:
+        df["Daily Intake (Value)"] = df["Your Daily Intake"].str.extract(r"([\d\.]+)").astype(float)
 
     # Align and match the rows manually
     aligned_daily_intake = df.set_index("Nutrient").rename(index=nutrient_mapping)
