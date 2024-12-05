@@ -83,14 +83,27 @@ def get_nutrients_and_KNN(recipe_name):
         if nutrients:
             detected_recipe_df = pd.DataFrame(nutrients)
 
-            # Select only the relevant columns for display
+            # Select only columns ending with "_total"
             relevant_columns = [col for col in detected_recipe_df.columns if "_total" in col]
             detected_recipe_df = detected_recipe_df[relevant_columns].transpose()
 
             # Rename the index for user-friendliness and add emojis
-            detected_recipe_df.index = detected_recipe_df.index.map(
-                lambda x: f"{nutrient_emojis.get(x.split('_')[0], '🍽️')} {x.replace('_(G)_total', ' (g)').replace('_(MG)_total', ' (mg)').replace('_(UG)_total', ' (µg)')}"
-            )
+            def map_nutrient_name(name):
+                # Extract base nutrient name
+                base_name = name.split("_")[0]  # E.g., "Carbohydrates"
+                emoji = nutrient_emojis.get(base_name, "🍽️")  # Default emoji
+                # Replace units and append emoji
+                friendly_name = (
+                    name.replace("_(G)_total", " (g)")
+                    .replace("_(MG)_total", " (mg)")
+                    .replace("_(UG)_total", " (µg)")
+                )
+                return f"{emoji} {friendly_name}"
+
+            detected_recipe_df.index = detected_recipe_df.index.map(map_nutrient_name)
+
+            # Round nutrient values
+            detected_recipe_df = detected_recipe_df.round(0)
 
             st.subheader("Nutritional Content of your plate")
             st.dataframe(detected_recipe_df)
