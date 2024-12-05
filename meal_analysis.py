@@ -27,16 +27,16 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 
     # Define manual column mapping
     nutrient_mapping = {
-        "Carbohydrates": "Carbohydrates_(G)_total",
-        "Proteins": "Protein_(G)_total",
-        "Fats": "Lipid_(G)_total",
-        "Calcium": "Calcium_(MG)_total",
-        "Iron": "Iron_(MG)_total",
-        "Magnesium": "Magnesium_(MG)_total",
-        "Sodium": "Sodium_(MG)_total",
-        "Vitamin C": "Vitamin_C_(MG)_total",
-        "Vitamin D": "Vitamin_D_(UG)_total",
-        "Vitamin A": "Vitamin_A_(UG)_total",
+        "Carbohydrates": "🍞 Carbohydrates (g)",
+        "Proteins": "🥩 Proteins (g)",
+        "Fats": "🥑 Fats (g)",
+        "Calcium": "🥛 Calcium (mg)",
+        "Iron": "🥬 Iron (mg)",
+        "Magnesium": "🐟 Magnesium (mg)",
+        "Sodium": "🧂 Sodium (mg)",
+        "Vitamin C": "🍊 Vitamin C (mg)",
+        "Vitamin D": "🌞 Vitamin D (µg)",
+        "Vitamin A": "🥕 Vitamin A (µg)",
     }
 
     # Prepare daily intake values (strip units and convert to floats)
@@ -60,20 +60,6 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 
 
 def get_nutrients_and_KNN(recipe_name):
-    # Nutrient-to-emoji mapping
-    nutrient_emojis = {
-        "Carbohydrates": "🍞",
-        "Proteins": "🥩",
-        "Fats": "🥑",
-        "Calcium": "🥛",
-        "Iron": "🥬",
-        "Magnesium": "🐟",
-        "Sodium": "🧂",
-        "Vitamin C": "🍊",
-        "Vitamin D": "🌞",
-        "Vitamin A": "🥕",
-    }
-
     # Fetch nutrients for the detected recipe
     nutrients_url = f"{SERVICE_URL}/tnutrients?recipe={recipe_name}"
     nutrients_response = requests.get(nutrients_url)
@@ -83,30 +69,56 @@ def get_nutrients_and_KNN(recipe_name):
         if nutrients:
             detected_recipe_df = pd.DataFrame(nutrients)
 
-            # Select only columns ending with "_total"
-            relevant_columns = [col for col in detected_recipe_df.columns if "_total" in col]
-            detected_recipe_df = detected_recipe_df[relevant_columns].transpose()
+            # Select only the relevant columns
+            relevant_columns = [
+                "Carbohydrates_(G)_total",
+                "Protein_(G)_total",
+                "Lipid_(G)_total",
+                "Calcium_(MG)_total",
+                "Iron_(MG)_total",
+                "Magnesium_(MG)_total",
+                "Sodium_(MG)_total",
+                "Vitamin_C_(MG)_total",
+                "Vitamin_D_(UG)_total",
+                "Vitamin_A_(UG)_total",
+            ]
+            detected_recipe_df = detected_recipe_df[relevant_columns]
 
-            # Rename the index for user-friendliness and add emojis
-            def map_nutrient_name(name):
-                # Extract base nutrient name
-                base_name = name.split("_")[0].replace("Vitamin", "Vitamin ").replace("_", " ")
-                emoji = nutrient_emojis.get(base_name.strip(), "🍽️")  # Default emoji
-                # Replace units and append emoji
-                friendly_name = (
-                    name.replace("_(G)_total", " (g)")
-                    .replace("_(MG)_total", " (mg)")
-                    .replace("_(UG)_total", " (µg)")
-                )
-                return f"{emoji} {friendly_name.replace('_', ' ')}"
+            # Manually rename columns to match emojis and friendly names
+            column_rename_mapping = {
+                "Carbohydrates_(G)_total": "🍞 Carbohydrates (g)",
+                "Protein_(G)_total": "🥩 Proteins (g)",
+                "Lipid_(G)_total": "🥑 Fats (g)",
+                "Calcium_(MG)_total": "🥛 Calcium (mg)",
+                "Iron_(MG)_total": "🥬 Iron (mg)",
+                "Magnesium_(MG)_total": "🐟 Magnesium (mg)",
+                "Sodium_(MG)_total": "🧂 Sodium (mg)",
+                "Vitamin_C_(MG)_total": "🍊 Vitamin C (mg)",
+                "Vitamin_D_(UG)_total": "🌞 Vitamin D (µg)",
+                "Vitamin_A_(UG)_total": "🥕 Vitamin A (µg)",
+            }
+            detected_recipe_df.rename(columns=column_rename_mapping, inplace=True)
 
-            detected_recipe_df.index = detected_recipe_df.index.map(map_nutrient_name)
+            # Reorder the columns to match the specified order
+            ordered_columns = [
+                "🍞 Carbohydrates (g)",
+                "🥩 Proteins (g)",
+                "🥑 Fats (g)",
+                "🥛 Calcium (mg)",
+                "🥬 Iron (mg)",
+                "🐟 Magnesium (mg)",
+                "🧂 Sodium (mg)",
+                "🍊 Vitamin C (mg)",
+                "🌞 Vitamin D (µg)",
+                "🥕 Vitamin A (µg)",
+            ]
+            detected_recipe_df = detected_recipe_df[ordered_columns]
 
-            # Round nutrient values
+            # Round the values for a cleaner display
             detected_recipe_df = detected_recipe_df.round(0)
 
-            # Convert to a DataFrame for headers
-            nutrient_df = detected_recipe_df.reset_index()
+            # Reset the index for a clean table and display with headers
+            nutrient_df = detected_recipe_df.transpose().reset_index()
             nutrient_df.columns = ["Nutrient", "Quantity in your plate"]
 
             st.subheader("Nutritional Content of your plate")
