@@ -9,6 +9,7 @@ SERVICE_URL = st.secrets["general"]["SERVICE_URL"]
 
 
 def relaunch_photo_analysis():
+    time.sleep(1)
     st.session_state["page"] = "meal_analysis"
 
 
@@ -137,23 +138,13 @@ def meal_analysis():
 
                             elif 0.6 <= confidence <= 0.8:
                                 st.warning(f"Your meal might be **{recipe_name}**. The model has moderate confidence.")
-
-                                if st.button("Yes, that's correct!"):
-                                    get_nutrients_and_KNN(recipe_name)
-
-                                if st.button("No, that's not correct."):
-                                    st.info("Please upload a new photo for analysis.")
-                                    time.sleep(1)
-                                    relaunch_photo_analysis()
-
+                                st.button("Yes, that's correct!", on_click=lambda: get_nutrients_and_KNN(recipe_name))
+                                st.button("No, that's not correct.", on_click=relaunch_photo_analysis)
 
                             elif confidence < 0.6:
                                 st.warning("The model is unsure about your meal. Could you help us improve?")
                                 user_input = st.text_input("What is on your plate?")
-                                if user_input:
-                                    st.success("Thank you for helping us improve! Please upload another photo if needed.")
-                                    time.sleep(1)
-                                    relaunch_photo_analysis()
+                                st.button("Submit", on_click=relaunch_photo_analysis)
 
                     else:
                         st.error(f"API call failed with status code {response.status_code}")
