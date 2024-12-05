@@ -9,7 +9,6 @@ SERVICE_URL = st.secrets["general"]["SERVICE_URL"]
 
 
 def relaunch_photo_analysis():
-    time.sleep(1)
     st.session_state["page"] = "meal_analysis"
 
 
