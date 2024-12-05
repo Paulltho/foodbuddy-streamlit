@@ -72,7 +72,7 @@ def nutrition_form():
                     }
 
                     st.subheader("Your Daily Nutritional Intake")
-                    st.write(f"**Base Metabolic Rate (BMR):** {bmr} kcal/day")
+                    # st.write(f"**Base Metabolic Rate (BMR):** {bmr} kcal/day")
                     for nutrient in nutrients:
                         emoji = nutrient_emojis.get(nutrient["Nutrient"], "🍽️")
                         st.markdown(
