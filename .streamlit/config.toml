@@ -4,7 +4,7 @@ primaryColor="#FF5733"  # Vibrant red (used for buttons and accents)
 backgroundColor="#FFF8E1"  # Warm, soft yellow background
 secondaryBackgroundColor="#FFFFFF"  # White for card backgrounds
 textColor="#4CAF50"  # Green for a healthy vibe
-font="Poppins"  # Stylish and original font
+font="sans serif"  # Stylish and original font
 
 [button]
 # Buttons globally styled as big, red, and centered using CSS
