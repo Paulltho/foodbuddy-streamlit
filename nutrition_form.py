@@ -61,11 +61,23 @@ def nutrition_form():
 
                     st.subheader("Your Daily Nutritional Intake")
                     st.write(f"**Base Metabolic Rate (BMR):** {bmr} kcal/day")
-                    st.dataframe(df[["Nutrient", "Your Daily Intake", "Description"]])
-
-                    # Store the result in session state for navigation
+                    for nutrient in df:
+                        st.markdown(
+                            f"""
+                            <div style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+                                <h4 style="margin: 0;">{nutrient['Nutrient']}</h4>
+                                <p style="margin: 5px 0;"><b>Daily Intake:</b> {nutrient['Your Daily Intake']}</p>
+                                <p style="margin: 0; color: #555;">{nutrient['Description']}</p>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+                     # Store the result in session state for navigation
                     st.session_state["df"] = df
                     st.session_state["daily_needs_ok"] = True
+
+
+
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
@@ -75,4 +87,3 @@ def nutrition_form():
         def go_to_scan():
             st.session_state["page"] = "meal_analysis"
         st.button("Scan my plate", on_click=go_to_scan)
-            
