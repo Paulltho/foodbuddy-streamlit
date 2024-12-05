@@ -1,0 +1,7 @@
+[theme]
+base="light"  # Light theme for a clean and fresh look
+primaryColor="#006400"  # Dark green (used for buttons and accents)
+backgroundColor="#E8F5E9"  # Light elegant green background
+secondaryBackgroundColor="#FFFFFF"  # White for card backgrounds
+textColor="#004D40"  # Darker green for text
+font="sans serif"  # Default sans-serif font
