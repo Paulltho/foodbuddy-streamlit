@@ -127,7 +127,7 @@ def get_nutrients_and_KNN(recipe_name):
             nutrient_df.columns = ["Nutrient", "Quantity in your plate"]
             nutrient_df["Quantity in your plate"] = nutrient_df["Quantity in your plate"].astype(int)
 
-            nutrient_df_display = nutrient_df.reset_index(drop=True)
+            nutrient_df_display = nutrient_df.copy().reset_index(drop=True)
             nutrient_df_display = nutrient_df_display.set_index("Nutrient")
 
             st.subheader("Nutritional Content of your plate")
