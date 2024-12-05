@@ -107,7 +107,7 @@ def meal_analysis():
     st.markdown("Upload an image of your meal to analyze its nutritional content.")
 
     # Upload Section
-    uploaded_file = st.file_uploader("", type=["any image format"])
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
 
     if uploaded_file:
         if st.button("Analyze Plate Content"):
