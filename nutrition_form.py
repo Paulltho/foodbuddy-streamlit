@@ -87,4 +87,34 @@ def nutrition_form():
     if st.session_state.get("daily_needs_ok", False):
         def go_to_scan():
             st.session_state["page"] = "meal_analysis"
-        st.button("Scan my plate", on_click=go_to_scan)
+        # st.button("Scan my plate!", on_click=go_to_scan)
+        # Add a blank line before the button
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Add a larger button with custom CSS styling
+        st.markdown(
+            """
+            <style>
+            .big-button {
+                display: inline-block;
+                font-size: 20px;
+                font-weight: bold;
+                padding: 10px 20px;
+                margin-top: 10px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .big-button:hover {
+                background-color: #45a049;
+            }
+            </style>
+            <div style="text-align: center;">
+                <button class="big-button" onclick="window.location.href='/scan'">Scan my plate!</button>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
