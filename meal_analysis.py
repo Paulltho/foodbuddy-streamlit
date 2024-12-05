@@ -68,7 +68,7 @@ def get_nutrients_and_KNN(recipe_name):
         nutrients = nutrients_response.json().get("nutrients", [])
         detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
 
-        st.subheader("Nutritional Information")
+        st.subheader(f"Nutritional Information for **{recipe_name}**")
         st.dataframe(detected_recipe_df)
 
         remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
@@ -137,7 +137,11 @@ def meal_analysis():
 
                             elif 0.6 <= confidence <= 0.8:
                                 st.warning(f"Your meal might be **{recipe_name}**. The model has moderate confidence.")
-                                st.button("Yes, that's correct!", on_click=lambda: get_nutrients_and_KNN(recipe_name))
+                                if st.button("Yes, that's correct!"):
+                                    answer = True
+                                if answer == True:
+                                    get_nutrients_and_KNN(recipe_name)
+
                                 st.button("No, that's not correct.", on_click=relaunch_photo_analysis)
 
                             elif confidence < 0.6:
