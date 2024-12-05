@@ -58,10 +58,23 @@ def nutrition_form():
                     daily_caloric_needs = result["daily_caloric_needs"]
                     df = pd.DataFrame(result["nutrients"])
                     nutrients = result.get("nutrients", [])
+                    nutrient_emojis = {
+                        "Carbohydrates": "🍞",
+                        "Proteins": "🥩",
+                        "Fats": "🥑",
+                        "Calcium": "🥛",
+                        "Iron": "🥬",
+                        "Magnesium": "🌰",
+                        "Sodium": "🧂",
+                        "Vitamin C": "🍊",
+                        "Vitamin D": "🌞",
+                        "Vitamin A": "🥕",
+                    }
 
                     st.subheader("Your Daily Nutritional Intake")
                     st.write(f"**Base Metabolic Rate (BMR):** {bmr} kcal/day")
                     for nutrient in nutrients:
+                        emoji = nutrient_emojis.get(nutrient["Nutrient"], "🍽️")
                         st.markdown(
                             f"""
                             <div style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
@@ -90,4 +103,3 @@ def nutrition_form():
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.button("Scan my plate!", on_click=go_to_scan)
-
