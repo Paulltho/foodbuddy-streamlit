@@ -64,7 +64,7 @@ def nutrition_form():
                         "Fats": "🥑",
                         "Calcium": "🥛",
                         "Iron": "🥬",
-                        "Magnesium": "🌰",
+                        "Magnesium": "🐟",
                         "Sodium": "🧂",
                         "Vitamin C": "🍊",
                         "Vitamin D": "🌞",
