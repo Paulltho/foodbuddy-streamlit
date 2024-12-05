@@ -39,27 +39,25 @@ def remaining_nutrients_manual(df, detected_recipe_df):
         "Vitamin A": "🥕 Vitamin A (µg)",
     }
 
-    # Extract numeric values from "Your Daily Intake" and create "Daily Intake (Value)"
-    if "Daily Intake (Value)" not in df.columns:
-        df["Daily Intake (Value)"] = df["Your Daily Intake"].str.extract(r"([\d\.]+)").astype(float)
-
     # Align and match the rows manually
     aligned_daily_intake = df.set_index("Nutrient").rename(index=nutrient_mapping)
     aligned_detected_recipe = detected_recipe_df.set_index("Nutrient")
 
     # Ensure the detected recipe contains numeric values
     aligned_detected_recipe["Quantity in your plate"] = aligned_detected_recipe["Quantity in your plate"].astype(float)
+    st.table(aligned_daily_intake)
+    st.table(aligned_detected_recipe)
 
     # Perform subtraction to calculate remaining nutrients
     remaining_nutrients = (
-        aligned_daily_intake["Daily Intake (Value)"] - aligned_detected_recipe["Quantity in your plate"]
+        aligned_daily_intake["Value"] - aligned_detected_recipe["Quantity in your plate"]
     )
 
     # Create the output DataFrame
     remaining_df = pd.DataFrame({
         "Nutrient": aligned_daily_intake.index,
         "Remaining Daily Intake": remaining_nutrients.values.round(0),
-        "Original Daily Intake": aligned_daily_intake["Daily Intake (Value)"].values.round(0),
+        "Original Daily Intake": aligned_daily_intake["Value"].values.round(0),
         "Detected Plate Content": aligned_detected_recipe["Quantity in your plate"].values.round(0),
     })
 
