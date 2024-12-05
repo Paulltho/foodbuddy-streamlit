@@ -8,6 +8,10 @@ import time
 SERVICE_URL = st.secrets["general"]["SERVICE_URL"]
 
 
+def relaunch_photo_analysis():
+    st.session_state["page"] = "meal_analysis"
+
+
 def remaining_nutrients_manual(df, detected_recipe_df):
     """
     Manually aligns and matches nutrient columns between the user's daily intake
@@ -55,6 +59,43 @@ def remaining_nutrients_manual(df, detected_recipe_df):
     return remaining_df
 
 
+def get_nutrients_and_KNN(recipe_name):
+    # Fetch nutrients for the detected recipe
+    nutrients_url = f"{SERVICE_URL}/tnutrients?recipe={recipe_name}"
+    nutrients_response = requests.get(nutrients_url)
+
+    if nutrients_response.status_code == 200:
+        nutrients = nutrients_response.json().get("nutrients", [])
+        detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
+
+        st.subheader("Nutritional Information")
+        st.dataframe(detected_recipe_df)
+
+        remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
+
+        # Automatically call KNN after plate analysis
+        nutrient_values = remaining_df["Remaining Daily Intake"].tolist()
+        if nutrient_values is not None:
+            # Prepare payload for KNN
+            payload = {
+                "nutrient_values": nutrient_values,
+            }
+
+            # Call KNN API
+            knn_url = f"{SERVICE_URL}/knn-recipes"
+            knn_response = requests.post(knn_url, json=payload)
+
+            if knn_response.status_code == 200:
+                knn_results = knn_response.json()
+                st.subheader("Recommended Recipes")
+                for recipe in knn_results.get("recipes", []):
+                    st.markdown(f"- **{recipe['recipe']}**")
+            else:
+                st.error(f"KNN API call failed with status code {knn_response.status_code}")
+        else:
+            st.error("User's daily nutrient data not found.")
+
+
 def meal_analysis():
 
     # Add a "Go Back" button to navigate to the previous page
@@ -66,7 +107,7 @@ def meal_analysis():
     st.markdown("Upload an image of your meal to analyze its nutritional content.")
 
     # Upload Section
-    uploaded_file = st.file_uploader("Upload a photo of your meal", type=["jpg", "png", "jpeg"])
+    uploaded_file = st.file_uploader("", type=["any image format"])
 
     if uploaded_file:
         if st.button("Analyze Plate Content"):
@@ -87,101 +128,41 @@ def meal_analysis():
                         else:
                             confidence = result["probability"]
                             recipe_name = result["predicted_recipe_name"]
+
+
                             if confidence > 0.8:
                                 st.success(f"We detected **{recipe_name}** on your plate with high confidence!")
+                                get_nutrients_and_KNN(recipe_name)
 
-                                # Fetch nutrients for the detected recipe
-                                nutrients_url = f"{SERVICE_URL}/tnutrients?recipe={recipe_name}"
-                                nutrients_response = requests.get(nutrients_url)
-
-                                if nutrients_response.status_code == 200:
-                                    nutrients = nutrients_response.json().get("nutrients", [])
-                                    detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
-
-                                    st.subheader("Nutritional Information")
-                                    st.dataframe(detected_recipe_df)
-
-                                    remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
-
-                                    # Automatically call KNN after plate analysis
-                                    nutrient_values = remaining_df["Remaining Daily Intake"].tolist()
-                                    if nutrient_values is not None:
-                                        # Prepare payload for KNN
-                                        payload = {
-                                            "nutrient_values": nutrient_values,
-                                        }
-
-                                        # Call KNN API
-                                        knn_url = f"{SERVICE_URL}/knn-recipes"
-                                        knn_response = requests.post(knn_url, json=payload)
-
-                                        if knn_response.status_code == 200:
-                                            knn_results = knn_response.json()
-                                            st.subheader("Recommended Recipes")
-                                            for recipe in knn_results.get("recipes", []):
-                                                st.markdown(f"- **{recipe['recipe']}**")
-                                        else:
-                                            st.error(f"KNN API call failed with status code {knn_response.status_code}")
-                                    else:
-                                        st.error("User's daily nutrient data not found.")
 
                             elif 0.6 <= confidence <= 0.8:
                                 st.warning(f"Your meal might be **{recipe_name}**. The model has moderate confidence.")
 
-                                # Prompt user feedback
-                                feedback_col1, feedback_col2 = st.columns(2)
-                                with feedback_col1:
-                                    if st.button("Yes, that's correct!"):
-                                        nutrients_url = f"{SERVICE_URL}/tnutrients?recipe={recipe_name}"
-                                        nutrients_response = requests.get(nutrients_url)
-                                        if nutrients_response.status_code == 200:
-                                            nutrients = nutrients_response.json().get("nutrients", [])
-                                            detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
-                                            st.subheader("Nutritional Information")
-                                            st.dataframe(detected_recipe_df)
+                                if st.button("Yes, that's correct!"):
+                                    get_nutrients_and_KNN(recipe_name)
 
-                                            # Call KNN as above
-                                            user_daily_nutrients = st.session_state.get("df")
-                                            if user_daily_nutrients is not None:
-                                                # Prepare payload for KNN
-                                                payload = {
-                                                    "user_daily_nutrients": user_daily_nutrients.to_dict(orient="records"),
-                                                    "detected_recipe_nutrients": detected_recipe_df.to_dict(orient="records"),
-                                                }
+                                if st.button("No, that's not correct."):
+                                    st.info("Please upload a new photo for analysis.")
+                                    time.sleep(1)
+                                    relaunch_photo_analysis()
 
-                                                # Call KNN API
-                                                knn_url = f"{SERVICE_URL}/knn-recipes"
-                                                knn_response = requests.post(knn_url, json=payload)
-
-                                                if knn_response.status_code == 200:
-                                                    knn_results = knn_response.json()
-                                                    st.subheader("Recommended Recipes")
-                                                    for recipe in knn_results.get("recipes", []):
-                                                        st.markdown(f"- **{recipe['recipe']}** (Distance: {recipe['distance']:.2f})")
-                                                else:
-                                                    st.error(f"KNN API call failed with status code {knn_response.status_code}")
-                                            else:
-                                                st.error("User's daily nutrient data not found.")
-                                        else:
-                                            st.error("Unable to fetch nutrients for the identified recipe.")
-
-                                with feedback_col2:
-                                    if st.button("No, that's not correct."):
-                                        st.info("Please upload a new photo for analysis.")
 
                             elif 0.4 <= confidence < 0.6:
                                 st.warning("The model is unsure about your meal. Could you help us improve?")
                                 user_input = st.text_input("What is on your plate?")
                                 if user_input:
                                     st.success("Thank you for helping us improve! Please upload another photo if needed.")
+                                    time.sleep(1)
+                                    relaunch_photo_analysis()
+
 
                             else:
                                 st.error("We couldn't confidently identify your meal. Please try again!")
+                                time.sleep(3)
+                                relaunch_photo_analysis()
 
 
                     else:
                         st.error(f"API call failed with status code {response.status_code}")
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
-
-
