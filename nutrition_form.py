@@ -87,35 +87,7 @@ def nutrition_form():
     if st.session_state.get("daily_needs_ok", False):
         def go_to_scan():
             st.session_state["page"] = "meal_analysis"
-        # st.button("Scan my plate!", on_click=go_to_scan)
-
-
         # Add a blank line before the button
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Add a larger button with custom styling
-        st.markdown(
-            """
-            <style>
-            div.stButton > button {
-                font-size: 20px;
-                font-weight: bold;
-                padding: 10px 20px;
-                margin-top: 10px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-            }
-            div.stButton > button:hover {
-                background-color: #45a049;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # Functional Streamlit button
-        if st.button("Scan my plate!"):
-            go_to_scan()
+        st.button("Scan my plate!", on_click=go_to_scan)
