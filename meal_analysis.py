@@ -147,20 +147,13 @@ def meal_analysis():
                                     relaunch_photo_analysis()
 
 
-                            elif 0.4 <= confidence < 0.6:
+                            elif confidence < 0.6:
                                 st.warning("The model is unsure about your meal. Could you help us improve?")
                                 user_input = st.text_input("What is on your plate?")
                                 if user_input:
                                     st.success("Thank you for helping us improve! Please upload another photo if needed.")
                                     time.sleep(1)
                                     relaunch_photo_analysis()
-
-
-                            else:
-                                st.error("We couldn't confidently identify your meal. Please try again!")
-                                time.sleep(3)
-                                relaunch_photo_analysis()
-
 
                     else:
                         st.error(f"API call failed with status code {response.status_code}")
