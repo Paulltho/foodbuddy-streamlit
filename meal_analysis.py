@@ -130,7 +130,7 @@ def get_nutrients_and_KNN(recipe_name):
         st.table(st.session_state.get("df"))
         st.table(detected_recipe_df)
 
-        remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
+        remaining_df = remaining_nutrients_manual(st.session_state.get("df"),nutrient_df)
 
         # Automatically call KNN after plate analysis
         nutrient_values = remaining_df["Remaining Daily Intake"].tolist()
