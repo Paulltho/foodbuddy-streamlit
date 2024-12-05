@@ -3,7 +3,8 @@ from homepage import homepage
 from nutrition_form import nutrition_form
 from meal_analysis import meal_analysis
 
-# Custom CSS for "Poppins" and button styling
+
+# Custom CSS for "Poppins" font and updated button styles
 st.markdown(
     """
     <style>
@@ -11,6 +12,7 @@ st.markdown(
 
     html, body, [class*="css"]  {
         font-family: 'Poppins', sans-serif;
+        background-color: #E8F5E9; /* Light elegant green background */
     }
 
     div.stButton {
@@ -22,14 +24,14 @@ st.markdown(
         font-size: 20px; /* Large font for buttons */
         font-weight: bold; /* Makes button text bold */
         padding: 12px 24px; /* Generous padding for a bigger button */
-        background-color: #FF5733; /* Vibrant red background */
+        background-color: #006400; /* Dark green button background */
         color: white; /* White text for contrast */
         border: none; /* Removes default button border */
         border-radius: 10px; /* Rounded corners for buttons */
         cursor: pointer; /* Pointer cursor on hover */
     }
     div.stButton > button:hover {
-        background-color: #E74C3C; /* Darker red for hover effect */
+        background-color: #004D40; /* Darker green for hover effect */
     }
     </style>
     """,

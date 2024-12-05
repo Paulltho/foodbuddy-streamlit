@@ -1,32 +1,7 @@
 [theme]
 base="light"  # Light theme for a clean and fresh look
-primaryColor="#FF5733"  # Vibrant red (used for buttons and accents)
-backgroundColor="#FFF8E1"  # Warm, soft yellow background
+primaryColor="#006400"  # Dark green (used for buttons and accents)
+backgroundColor="#E8F5E9"  # Light elegant green background
 secondaryBackgroundColor="#FFFFFF"  # White for card backgrounds
-textColor="#4CAF50"  # Green for a healthy vibe
-font="sans serif"  # Stylish and original font
-
-[button]
-# Buttons globally styled as big, red, and centered using CSS
-custom_css = """
-<style>
-div.stButton {
-    display: flex;
-    justify-content: center; /* Centers the button horizontally */
-    margin-top: 15px; /* Adds spacing above the button */
-}
-div.stButton > button {
-    font-size: 20px; /* Large font for buttons */
-    font-weight: bold; /* Makes button text bold */
-    padding: 12px 24px; /* Generous padding for a bigger button */
-    background-color: #FF5733; /* Vibrant red background */
-    color: white; /* White text for contrast */
-    border: none; /* Removes default button border */
-    border-radius: 10px; /* Rounded corners for buttons */
-    cursor: pointer; /* Pointer cursor on hover */
-}
-div.stButton > button:hover {
-    background-color: #E74C3C; /* Darker red for hover effect */
-}
-</style>
-"""
+textColor="#004D40"  # Darker green for text
+font="sans serif"  # Default sans-serif font
