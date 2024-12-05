@@ -90,23 +90,27 @@ def get_nutrients_and_KNN(recipe_name):
             # Rename the index for user-friendliness and add emojis
             def map_nutrient_name(name):
                 # Extract base nutrient name
-                base_name = name.split("_")[0]  # E.g., "Carbohydrates"
-                emoji = nutrient_emojis.get(base_name, "🍽️")  # Default emoji
+                base_name = name.split("_")[0].replace("Vitamin", "Vitamin ").replace("_", " ")
+                emoji = nutrient_emojis.get(base_name.strip(), "🍽️")  # Default emoji
                 # Replace units and append emoji
                 friendly_name = (
                     name.replace("_(G)_total", " (g)")
                     .replace("_(MG)_total", " (mg)")
                     .replace("_(UG)_total", " (µg)")
                 )
-                return f"{emoji} {friendly_name}"
+                return f"{emoji} {friendly_name.replace('_', ' ')}"
 
             detected_recipe_df.index = detected_recipe_df.index.map(map_nutrient_name)
 
             # Round nutrient values
             detected_recipe_df = detected_recipe_df.round(0)
 
+            # Convert to a DataFrame for headers
+            nutrient_df = detected_recipe_df.reset_index()
+            nutrient_df.columns = ["Nutrient", "Quantity in your plate"]
+
             st.subheader("Nutritional Content of your plate")
-            st.dataframe(detected_recipe_df)
+            st.table(nutrient_df)
         else:
             st.error("No nutrient data found for this recipe.")
 
