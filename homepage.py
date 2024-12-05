@@ -21,19 +21,23 @@ def homepage():
 st.markdown(
     """
     <style>
-    div.stButton.red-button > button {
-        font-size: 20px;
-        font-weight: bold;
-        padding: 10px 20px;
-        margin-top: 10px;
-        background-color: #FF5733;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
+    div.stButton {
+        display: flex;
+        justify-content: center; /* Centers the button horizontally */
+        margin-top: 10px; /* Adds spacing above the button */
     }
-    div.stButton.red-button > button:hover {
-        background-color: #E74C3C;
+    div.stButton > button {
+        font-size: 20px; /* Makes the button text larger */
+        font-weight: bold; /* Makes the button text bold */
+        padding: 10px 20px; /* Adds padding around the text */
+        background-color: #FF5733; /* Sets the button background color to red */
+        color: white; /* Sets the text color to white */
+        border: none; /* Removes the button border */
+        border-radius: 8px; /* Adds rounded corners */
+        cursor: pointer; /* Changes the cursor to a pointer on hover */
+    }
+    div.stButton > button:hover {
+        background-color: #E74C3C; /* Darkens the red color on hover */
     }
     </style>
     """,
