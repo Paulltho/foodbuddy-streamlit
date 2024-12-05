@@ -58,10 +58,11 @@ def nutrition_form():
                     bmr = result["bmr"]
                     daily_caloric_needs = result["daily_caloric_needs"]
                     df = pd.DataFrame(result["nutrients"])
+                    nutrients = result.get("nutrients", [])
 
                     st.subheader("Your Daily Nutritional Intake")
                     st.write(f"**Base Metabolic Rate (BMR):** {bmr} kcal/day")
-                    for nutrient in df:
+                    for nutrient in nutrients:
                         st.markdown(
                             f"""
                             <div style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
