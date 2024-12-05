@@ -136,6 +136,7 @@ def meal_analysis():
 
 
                             elif 0.6 <= confidence <= 0.8:
+                                answer == False
                                 st.warning(f"Your meal might be **{recipe_name}**. The model has moderate confidence.")
                                 if st.button("Yes, that's correct!"):
                                     answer = True
