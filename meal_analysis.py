@@ -60,6 +60,20 @@ def remaining_nutrients_manual(df, detected_recipe_df):
 
 
 def get_nutrients_and_KNN(recipe_name):
+    # Nutrient-to-emoji mapping
+    nutrient_emojis = {
+        "Carbohydrates": "🍞",
+        "Proteins": "🥩",
+        "Fats": "🥑",
+        "Calcium": "🥛",
+        "Iron": "🥬",
+        "Magnesium": "🐟",
+        "Sodium": "🧂",
+        "Vitamin C": "🍊",
+        "Vitamin D": "🌞",
+        "Vitamin A": "🥕",
+    }
+
     # Fetch nutrients for the detected recipe
     nutrients_url = f"{SERVICE_URL}/tnutrients?recipe={recipe_name}"
     nutrients_response = requests.get(nutrients_url)
@@ -68,8 +82,27 @@ def get_nutrients_and_KNN(recipe_name):
         nutrients = nutrients_response.json().get("nutrients", [])
         detected_recipe_df = pd.DataFrame(nutrients).filter(regex="total$").transpose()
 
-        st.subheader(f"Nutritional Information for **{recipe_name}**")
+        st.subheader(f"Nutritional Content of your plate")
         st.dataframe(detected_recipe_df)
+
+        nutrients_data = []
+        for nutrient in nutrients:
+            emoji = nutrient_emojis.get(nutrient["Nutrient"], "🍽️")
+            nutrients_data.append({
+                "Nutrient": f"{nutrient['Nutrient']} {emoji} ({nutrient['Unit']})",
+                "Quantity in Dish": round(nutrient["Value"], 0)
+            })
+
+        # Create a DataFrame for Nutritional Intake
+        nutrients_df = pd.DataFrame(nutrients_data)
+
+        # Style the DataFrame for better display
+        st.table(nutrients_df)
+
+
+
+
+
 
         remaining_df = remaining_nutrients_manual(st.session_state.get("df"),detected_recipe_df)
 
@@ -88,12 +121,29 @@ def get_nutrients_and_KNN(recipe_name):
             if knn_response.status_code == 200:
                 knn_results = knn_response.json()
                 st.subheader("Recommended Recipes")
-                for recipe in knn_results.get("recipes", []):
-                    st.markdown(f"- **{recipe['recipe']}**")
+                # for recipe in knn_results.get("recipes", []):
+                #     st.markdown(f"- **{recipe['recipe']}**")
+
+                if "recipes" in knn_results:
+                    recipes = knn_results["recipes"]
+                    recipe_names = [f"**{recipe['recipe']}**" for recipe in recipes]
+
+                    # Display recipes as a bulleted list
+                    for recipe in recipe_names:
+                        st.markdown(f"- {recipe}")
+                else:
+                    st.info("No recommendations found.")
+
             else:
                 st.error(f"KNN API call failed with status code {knn_response.status_code}")
         else:
             st.error("User's daily nutrient data not found.")
+
+
+
+
+
+
 
 
 def meal_analysis():
