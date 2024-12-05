@@ -78,7 +78,7 @@ def nutrition_form():
                         st.markdown(
                             f"""
                             <div style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
-                                <h4 style="margin: 0;">{emoji} {nutrient['Nutrient']}</h4>
+                                <h4 style="margin: 0;">{nutrient['Nutrient']} {emoji} </h4>
                                 <p style="margin: 5px 0;"><b>Daily Intake:</b> {nutrient['Your Daily Intake']}</p>
                                 <p style="margin: 0; color: #555;">{nutrient['Description']}</p>
                             </div>
