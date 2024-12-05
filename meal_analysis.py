@@ -24,8 +24,7 @@ def remaining_nutrients_manual(df, detected_recipe_df):
     Returns:
         pd.DataFrame: A DataFrame showing remaining daily intake, original intake, and detected values.
     """
-
-    # Define manual column mapping
+    # Manual mapping of nutrient names between the two DataFrames
     nutrient_mapping = {
         "Carbohydrates": "🍞 Carbohydrates (g)",
         "Proteins": "🥩 Proteins (g)",
@@ -39,22 +38,28 @@ def remaining_nutrients_manual(df, detected_recipe_df):
         "Vitamin A": "🥕 Vitamin A (µg)",
     }
 
-    # Prepare daily intake values (strip units and convert to floats)
-    df["Daily Intake (Value)"] = df["Your Daily Intake"].str.extract(r"([\d\.]+)").astype(float)
+    # Align and match the rows manually
+    aligned_daily_intake = df.set_index("Nutrient").rename(index=nutrient_mapping)
+    aligned_detected_recipe = detected_recipe_df.set_index("Nutrient")
 
-    # Align detected recipe values using the mapping
-    detected_values = detected_recipe_df.loc[list(nutrient_mapping.values()), 0]
+    # Ensure the detected recipe contains numeric values
+    aligned_detected_recipe["Quantity in your plate"] = aligned_detected_recipe["Quantity in your plate"].astype(float)
 
     # Perform subtraction to calculate remaining nutrients
-    remaining_nutrients = df["Daily Intake (Value)"].values - detected_values.values
+    remaining_nutrients = (
+        aligned_daily_intake["Daily Intake (Value)"] - aligned_detected_recipe["Quantity in your plate"]
+    )
 
-    # Create output DataFrame
+    # Create the output DataFrame
     remaining_df = pd.DataFrame({
-        "Nutrient": df["Nutrient"],
-        "Remaining Daily Intake": remaining_nutrients,
-        "Original Daily Intake": df["Daily Intake (Value)"].values,
-        "Detected Plate Content": detected_values.values,
+        "Nutrient": aligned_daily_intake.index,
+        "Remaining Daily Intake": remaining_nutrients.values.round(0),
+        "Original Daily Intake": aligned_daily_intake["Daily Intake (Value)"].values.round(0),
+        "Detected Plate Content": aligned_detected_recipe["Quantity in your plate"].values.round(0),
     })
+
+    # Reset index for clean display
+    remaining_df.reset_index(drop=True, inplace=True)
 
     return remaining_df
 
