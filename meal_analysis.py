@@ -128,7 +128,7 @@ def get_nutrients_and_KNN(recipe_name):
             st.error("No nutrient data found for this recipe.")
 
         st.table(st.session_state.get("df"))
-        st.table(detected_recipe_df)
+        st.table(nutrient_df)
 
         remaining_df = remaining_nutrients_manual(st.session_state.get("df"),nutrient_df)
 
