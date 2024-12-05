@@ -127,13 +127,13 @@ def get_nutrients_and_KNN(recipe_name):
             nutrient_df.columns = ["Nutrient", "Quantity in your plate"]
             nutrient_df["Quantity in your plate"] = nutrient_df["Quantity in your plate"].astype(int)
 
+            nutrient_df.reset_index(drop=True, inplace=True)
+            nutrient_df = nutrient_df.set_index("Nutrient")
+
             st.subheader("Nutritional Content of your plate")
             st.table(nutrient_df)
         else:
             st.error("No nutrient data found for this recipe.")
-
-        st.table(st.session_state.get("df"))
-        st.table(nutrient_df)
 
         remaining_df = remaining_nutrients_manual(st.session_state.get("df"),nutrient_df)
 
